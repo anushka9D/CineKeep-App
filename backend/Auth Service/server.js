@@ -20,3 +20,27 @@ mongoose.connect(process.env.MONGODB_URI)
         console.log(error);
         process.exit(1);
     })
+
+/*
+
+const cookieParser = require('cookie-parser');
+const csrf = require('csurf');
+
+
+// Parse cookies (needed for csurf)
+app.use(cookieParser());
+
+
+// Enable CSRF protection (storing token in a cookie)
+const csrfProtection = csrf({
+  cookie: {
+    httpOnly: true,
+    sameSite: 'Strict',
+    secure: process.env.NODE_ENV === 'production' // use HTTPS in production
+  }
+});
+
+// Apply the CSRF protection to routes that change state (e.g. POST, PUT, DELETE)
+app.use(csrfProtection);
+
+*/
