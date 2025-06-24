@@ -1,0 +1,26 @@
+{
+  "name": "api-getway",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start:auth": "nodemon \"../Auth Service/server.js\"",
+    "start:movie": "nodemon ../Movie Service/server.js",
+    "start:user": "nodemon ../User Service/server.js",
+    "start:gateway": "nodemon gateway/index.js",
+    "start": "concurrently \"npm run start:auth\" \"npm run start:movie\" \"npm run start:user\" \"npm run start:gateway\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "concurrently": "^9.2.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "http-proxy-middleware": "^3.0.5",
+    "morgan": "^1.10.0",
+    "nodemon": "^3.1.10"
+  }
+}
