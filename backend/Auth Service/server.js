@@ -1,5 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const cors = require("cors");
 const app = express();
 require("dotenv").config();
 
@@ -14,7 +15,7 @@ mongoose.connect(process.env.MONGODB_URI)
     .then(()=>{
         console.log("MongoDB connection successfull..!");
         app.listen(process.env.PORT);
-        console.log(`Movie service Running on http://localhost:${process.env.MONGODB_URI}`);
+        console.log(`Movie service Running on http://localhost:${process.env.PORT}`);
     })
     .catch((error)=>{
         console.log(error);
