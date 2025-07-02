@@ -4,11 +4,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start:auth": "nodemon \"../Auth Service/server.js\"",
-    "start:movie": "nodemon \"../Movie Service/server.js\"",
-    "start:user": "nodemon \"../User Service/server.js\"",
-    "start:gateway": "nodemon gateway/index.js",
-    "start": "concurrently \"npm run start:auth\" \"npm run start:movie\" \"npm run start:user\" \"npm run start:gateway\""
+    "start": "nodemon/src server.js"
   },
   "keywords": [],
   "author": "",

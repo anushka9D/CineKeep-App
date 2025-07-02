@@ -2,45 +2,50 @@ version: '3.8'
 
 services:
   auth-service:
-    build: ./backend/auth-service
+    build: ./backend/Auth_Service
     ports:
-      - "5001:5001"
+      - "4001:4001"
     environment:
-      - MONGODB_URI=mongodb://mongo:27017/authdb
-      - PORT=5001
+      - mongodb+srv://allyaagaard2001:zQJPIsSNqleMKVbx@cinekeep-app.jakwfmw.mongodb.net/?retryWrites=true&w=majority&appName=CineKeep-App
+      - PORT=4001
     depends_on:
       - mongo
 
   movie-service:
-    build: ./backend/movie-service
+    build: ./backend/Movie_Service
     ports:
-      - "5002:5002"
+      - "4002:4002"
     environment:
-      - MONGODB_URI=mongodb://mongo:27017/moviedb
-      - PORT=5002
+      - mongodb+srv://allyaagaard2001:zQJPIsSNqleMKVbx@cinekeep-app.jakwfmw.mongodb.net/?retryWrites=true&w=majority&appName=CineKeep-App
+      - PORT=4002
     depends_on:
       - mongo
 
   user-service:
-    build: ./backend/user-service
+    build: ./backend/User_Service
     ports:
-      - "5003:5003"
+      - "4003:4003"
     environment:
-      - MONGODB_URI=mongodb://mongo:27017/userdb
-      - PORT=5003
+      - mongodb+srv://allyaagaard2001:zQJPIsSNqleMKVbx@cinekeep-app.jakwfmw.mongodb.net/?retryWrites=true&w=majority&appName=CineKeep-App
+      - PORT=4003
     depends_on:
       - mongo
 
   gateway:
-    build: ../backend/gateway
+    build: ../backend/API_Gateway
     ports:
-      - "5000:5000"
+      - "4000:4000"
     depends_on:
       - auth-service
       - user-service
       - movie-service
 
-  client:
-    build: ../client
+  mongo:
+    image: mongo
     ports:
-      - "3000:3000"
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:
