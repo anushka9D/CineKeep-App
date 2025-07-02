@@ -1,8 +1,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Login = require("../models/authModel");
-const User = require("../models");
-const Admin = require("../models");
+const axios = require("axios");
 
 exports.register = async(req,res) =>{
     try{
@@ -65,7 +64,7 @@ exports.checkLogin = async (req,res) =>{
         let userid;
 
         if(login.role === "user"){
-            const user = await User.findOne({email});
+            const user = await axios.get(`http://localhost:4003/users?email=${email}`);
 
             if(!user){
                 return res.status(404).json({message:"User not found"});
@@ -73,7 +72,7 @@ exports.checkLogin = async (req,res) =>{
 
             userid = user._id;
         }
-        else if(login.role === "admin"){
+        /*else if(login.role === "admin"){
             const admin = await Admin.findOne({email});
 
             if(!admin){
@@ -81,7 +80,7 @@ exports.checkLogin = async (req,res) =>{
             }
 
             userid = admin._id;
-        }
+        }*/
         else{
             return res.status(400).json({ message: "Invalid user role" });
         }
