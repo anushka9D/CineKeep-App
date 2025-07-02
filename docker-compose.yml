@@ -32,7 +32,7 @@ services:
       - mongo
 
   gateway:
-    build: ../backend/API_Gateway
+    build: ./backend/API_Getway
     ports:
       - "4000:4000"
     depends_on:
