@@ -14,10 +14,11 @@ exports.createUser = async (req, res) => {
             name, email, phone, password
         });
 
-        const newlogin = {email,password,role};
+        const newLogin = {email,password,role};
 
         try{
-            const iscreateLogin = await axios.post('http://localhost:4003/auth', newLogin);
+            await axios.post('http://localhost:4003/auth', newLogin);
+            
         }catch(err){
             return res.status(500).json({message:"Error creating login in auth service", error: err.message});
         }
