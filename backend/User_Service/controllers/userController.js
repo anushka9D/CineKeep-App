@@ -1,11 +1,30 @@
 const User = require("../models/User");
+const axios = require("axios");
 
 // Create User
 exports.createUser = async (req, res) => {
     try {
-        const newUser = new User(req.body);
+        const {name, email, phone, password, role} = req.body
+
+        if(!name || !email || !phone || !password || !role){
+            return res.status(404).json({message:"User some data are missing"});
+        }
+
+        const newUser = new User({
+            name, email, phone, password
+        });
+
+        const newlogin = {email,password,role};
+
+        try{
+            const iscreateLogin = await axios.post('http://localhost:4003/auth', newLogin);
+        }catch(err){
+            return res.status(500).json({message:"Error creating login in auth service", error: err.message});
+        }
+
         const savedUser = await newUser.save();
         res.status(201).json(savedUser);
+
     } catch (err) {
         res.status(400).json({ error: err.message });
     }
