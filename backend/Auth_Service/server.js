@@ -8,7 +8,7 @@ app.use(express.json());
 app.use(cors());
 
 //Routers
-
+app.use("/auth", require("./routes/authRoutes"));
 
 //DB connection
 mongoose.connect(process.env.MONGODB_URI)
