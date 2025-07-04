@@ -2,6 +2,9 @@ const express = require('express');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const router = express.Router();
 
+const verifyToken = require('./middlewares/authMiddileware');
+const authorizeRoles = require('./middlewares/roleMiddileware');
+
 // Routes to microservices
 router.use('/auth', createProxyMiddleware({
   target: 'http://localhost:4001',
@@ -11,7 +14,7 @@ router.use('/auth', createProxyMiddleware({
   },
 }));
 
-router.use('/movies', createProxyMiddleware({
+router.use('/movies', verifyToken, authorizeRoles("user","admin"), createProxyMiddleware({
   target: 'http://localhost:4002',
   changeOrigin: true,
   pathRewrite: {
@@ -19,7 +22,7 @@ router.use('/movies', createProxyMiddleware({
   },
 }));
 
-router.use('/users', createProxyMiddleware({
+router.use('/users', verifyToken, authorizeRoles("user"), createProxyMiddleware({
   target: 'http://localhost:4003',
   changeOrigin: true,
   pathRewrite: {
