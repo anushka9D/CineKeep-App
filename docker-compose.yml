@@ -6,7 +6,7 @@ services:
     ports:
       - "4001:4001"
     environment:
-      - mongodb+srv://allyaagaard2001:zQJPIsSNqleMKVbx@cinekeep-app.jakwfmw.mongodb.net/?retryWrites=true&w=majority&appName=CineKeep-App
+      - MONGODB_URI=mongodb+srv://allyaagaard2001:zQJPIsSNqleMKVbx@cinekeep-app.jakwfmw.mongodb.net/?retryWrites=true&w=majority&appName=CineKeep-App
       - PORT=4001
     depends_on:
       - mongo
@@ -16,7 +16,7 @@ services:
     ports:
       - "4002:4002"
     environment:
-      - mongodb+srv://allyaagaard2001:zQJPIsSNqleMKVbx@cinekeep-app.jakwfmw.mongodb.net/?retryWrites=true&w=majority&appName=CineKeep-App
+      - MONGODB_URI=mongodb+srv://allyaagaard2001:zQJPIsSNqleMKVbx@cinekeep-app.jakwfmw.mongodb.net/?retryWrites=true&w=majority&appName=CineKeep-App
       - PORT=4002
     depends_on:
       - mongo
@@ -26,7 +26,7 @@ services:
     ports:
       - "4003:4003"
     environment:
-      - mongodb+srv://allyaagaard2001:zQJPIsSNqleMKVbx@cinekeep-app.jakwfmw.mongodb.net/?retryWrites=true&w=majority&appName=CineKeep-App
+      - MONGODB_URI=mongodb+srv://allyaagaard2001:zQJPIsSNqleMKVbx@cinekeep-app.jakwfmw.mongodb.net/?retryWrites=true&w=majority&appName=CineKeep-App
       - PORT=4003
     depends_on:
       - mongo

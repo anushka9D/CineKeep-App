@@ -8,7 +8,7 @@ const loginLimiter = rateLimit({
   message: "Too many login attempts. Please try again later."
 });
 
-router.get("/register" ,register);
+router.post("/register" ,register);
 router.get("/login" ,loginLimiter,checkLogin);
 
-module.exports = Router;
+module.exports = router;

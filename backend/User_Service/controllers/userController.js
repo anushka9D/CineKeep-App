@@ -34,6 +34,11 @@ exports.createUser = async (req, res) => {
 // Get All Users
 exports.getAllUsers = async (req, res) => {
     try {
+        const userRole = req.user.role;
+
+        if (userRole !== "admin") {
+            return res.status(403).json({ message: "You do not have access to this resource." });
+        }
         const users = await User.find();
         res.json(users);
     } catch (err) {
