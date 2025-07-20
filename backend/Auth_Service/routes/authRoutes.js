@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const {register,checkLogin} = require("../controllers/authController")
+const {register,checkLogin,updateLogin,deleteLogin} = require("../controllers/authController")
 const rateLimit = require("express-rate-limit");
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -10,5 +10,7 @@ const loginLimiter = rateLimit({
 
 router.post("/register" ,register);
 router.get("/login" ,loginLimiter,checkLogin);
+router.put('/auth/:id', updateLogin);
+router.delete('/auth/:id', deleteLogin);
 
 module.exports = router;

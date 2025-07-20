@@ -1,4 +1,5 @@
 const User = require("../models/User");
+const bcrypt = require('bcrypt');
 const axios = require("axios");
 
 // Create User
@@ -10,14 +11,32 @@ exports.createUser = async (req, res) => {
             return res.status(404).json({message:"User some data are missing"});
         }
 
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            return res.status(400).json({ message: "Invalid email format" });
+        }
+
+        if (password.length < 8) {
+            return res.status(400).json({ message: "Password must be at least 8 characters long" });
+        }
+
+        const upperCaseRegex = /[A-Z]/;
+        const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/;
+
+        if (!upperCaseRegex.test(password) || !specialCharRegex.test(password)) {
+            return res.status(400).json({ message: "Password must contain at least 1 uppercase letter and 1 special character" });
+        }
+
+        const hashedPassword = await bcrypt.hash(password,10);
+
         const newUser = new User({
-            name, email, phone, password
+            name, email, phone, password:hashedPassword
         });
 
         const newLogin = {email,password,role};
 
         try{
-            await axios.post('http://localhost:4003/auth/register', newLogin);
+            await axios.post('http://localhost:4001/auth/register', newLogin);
             
         }catch(err){
             return res.status(500).json({message:"Error creating login in auth service", error: err.message});
@@ -49,9 +68,27 @@ exports.getAllUsers = async (req, res) => {
 // Get Single User
 exports.getUserById = async (req, res) => {
     try {
-        const user = await User.findById(req.params.id);
-        if (!user) return res.status(404).json({ error: "User not found" });
+        let userId;
+        const userRole = req.user.role;
+
+        if(userRole === "user"){
+            userId = req.user.id;
+        }
+        else if(userRole === "admin"){
+            userId = req.params.id;
+        }
+        else{
+            return res.status(403).json({ message: "You do not have access to this resource." });
+        }
+
+        const user = await User.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
         res.json(user);
+
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -60,13 +97,65 @@ exports.getUserById = async (req, res) => {
 // Update User
 exports.updateUser = async (req, res) => {
     try {
+        const userId = req.user.id;
+        const loginId = req.user.loginId;
+        const{name,email,password,phone} = req.body;
+
+        if(!name || !email || !phone){
+            return res.status(404).json({message:"Update details are missing"});
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            return res.status(400).json({ message: "Invalid email format" });
+        }
+
+        let hashedPassword;
+
+        if(password){
+            if (password.length < 8) {
+            return res.status(400).json({ message: "Password must be at least 8 characters long" });
+            }
+
+            const upperCaseRegex = /[A-Z]/;
+            const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/;
+
+            if (!upperCaseRegex.test(password) || !specialCharRegex.test(password)) {
+                return res.status(400).json({ message: "Password must contain at least 1 uppercase letter and 1 special character" });
+            }
+
+            hashedPassword = await bcrypt.hash(password,10);
+        }
+
+        const updateLogin = { email };
+        if (password) {
+            updateLogin.password = password; // Send raw password to auth service (assumed logic)
+        }
+
+        try{
+            await axios.put(`http://localhost:4001/auth/${loginId}`, updateLogin);
+            
+        }catch(err){
+            return res.status(500).json({message:"Error updating login in auth service", error: err.message});
+        }
+
+        const updateData = {
+            name,
+            email,
+            phone
+        };
+        if (hashedPassword) {
+            updateData.password = hashedPassword;
+        }
+
         const updatedUser = await User.findByIdAndUpdate(
-            req.params.id,
-            req.body,
+            { _id: userId },
+            updateData,
             { new: true, runValidators: true }
         );
-        if (!updatedUser) return res.status(404).json({ error: "User not found" });
+
         res.json(updatedUser);
+
     } catch (err) {
         res.status(400).json({ error: err.message });
     }
@@ -75,9 +164,24 @@ exports.updateUser = async (req, res) => {
 // Delete User
 exports.deleteUser = async (req, res) => {
     try {
-        const deletedUser = await User.findByIdAndDelete(req.params.id);
-        if (!deletedUser) return res.status(404).json({ error: "User not found" });
+        const userId = req.user.id;
+        const loginId = req.user.loginId;
+
+        try{
+            await axios.delete(`http://localhost:4001/auth/${loginId}`);
+            
+        }catch(err){
+            return res.status(500).json({message:"Error updating login in auth service", error: err.message});
+        }
+
+        const deletedUser = await User.findByIdAndDelete(userId);
+
+        if (!deletedUser){
+            return res.status(404).json({ error: "User not found" });
+        }
+
         res.json({ message: "User deleted successfully" });
+
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
