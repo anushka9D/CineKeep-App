@@ -59,19 +59,20 @@ exports.checkLogin = async (req,res) =>{
         const login = await Login.findOne({email});
 
         if(!login){
-            return res.status(404).json({message:"Invalide username or password"});
+            return res.status(404).json({message:"Invalid username or password"});
         }
 
-        const isvalidePassword = await bcrypt.compare(password,login.password);
+        const isValidPassword = await bcrypt.compare(password,login.password);
 
-        if(!isvalidePassword){
-            return res.status(404).json({message:"Invalide username or password"});
+        if(!isValidPassword){
+            return res.status(404).json({message:"Invalid username or password"});
         }
 
         let userid;
 
         if(login.role === "user"){
-            const user = await axios.get(`http://localhost:4003/users?email=${email}`);
+            const userResponse = await axios.get(`http://user-service:4003/users/email/${email}`);
+            const user = userResponse.data;
 
             if(!user){
                 return res.status(404).json({message:"User not found"});
@@ -105,13 +106,13 @@ exports.checkLogin = async (req,res) =>{
             httpOnly: true,
             sameSite: 'Strict',
             secure: true,
-            maxAge: 2 * 60 * 60 * 1000
+            maxAge: 60 * 60 * 1000
         });
 
         res.status(200).json({token});
 
     }catch(error){
-        res.status(400).json({ message: "Something went wrong." });
+        res.status(400).json({ message: "Something went wrong.", error: error.message });
     }
 };
 

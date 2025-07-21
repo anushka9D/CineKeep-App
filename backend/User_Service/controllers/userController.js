@@ -1,4 +1,4 @@
-const User = require("../models/User");
+const User = require("../models/userModel");
 const bcrypt = require('bcrypt');
 const axios = require("axios");
 
@@ -36,7 +36,7 @@ exports.createUser = async (req, res) => {
         const newLogin = {email,password,role};
 
         try{
-            await axios.post('http://localhost:4001/auth/register', newLogin);
+            await axios.post('http://auth-service:4001/auth/register', newLogin);
             
         }catch(err){
             return res.status(500).json({message:"Error creating login in auth service", error: err.message});
@@ -94,6 +94,28 @@ exports.getUserById = async (req, res) => {
     }
 };
 
+// Get Single User by email
+exports.getUserByEmail = async (req, res) => {
+    const email = req.params.email;
+
+    if (!email) {
+        return res.status(400).json({ message: "Email query parameter is required" });
+    }
+
+    try {
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        res.json(user);
+    } catch (err) {
+        console.error("User lookup failed:", err.message);
+        res.status(500).json({ message: "Internal server error", error: err.message });
+    }
+};
+
 // Update User
 exports.updateUser = async (req, res) => {
     try {
@@ -133,7 +155,7 @@ exports.updateUser = async (req, res) => {
         }
 
         try{
-            await axios.put(`http://localhost:4001/auth/${loginId}`, updateLogin);
+            await axios.put(`http://auth-service:4001/auth/${loginId}`, updateLogin);
             
         }catch(err){
             return res.status(500).json({message:"Error updating login in auth service", error: err.message});
@@ -168,7 +190,7 @@ exports.deleteUser = async (req, res) => {
         const loginId = req.user.loginId;
 
         try{
-            await axios.delete(`http://localhost:4001/auth/${loginId}`);
+            await axios.delete(`http://auth-service:4001/auth/${loginId}`);
             
         }catch(err){
             return res.status(500).json({message:"Error updating login in auth service", error: err.message});
